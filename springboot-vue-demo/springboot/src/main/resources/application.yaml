@@ -3,9 +3,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/vue?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/svms?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: root
-    password: root
+    password: password
 
 #mybatis:
 #  mapper-locations: classpath:mybatis/mapper/*.xml
