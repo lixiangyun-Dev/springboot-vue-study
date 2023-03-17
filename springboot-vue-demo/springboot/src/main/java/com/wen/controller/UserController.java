@@ -2,6 +2,7 @@ package com.wen.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wen.common.Result;
@@ -59,7 +60,9 @@ public class UserController {
     //    登录
     @PostMapping("/login")
     public Result<?> login(@RequestBody User user){//这只是传进来的user，并没有在数据库中进行查找
-        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword()));
+        QueryWrapper<User> sql = new QueryWrapper<User>();
+        User res = userMapper.selectOne(sql.eq("username", user.getUsername()).eq("password", user.getPassword()));
+//        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword()));
         if (res==null){
             return Result.error("-1","用户名或密码错误");
         }
@@ -69,14 +72,25 @@ public class UserController {
     //注册
     @PostMapping("/register")
     public Result<?> register(@RequestBody User user){
-        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
-        if (res!=null){
+
+        QueryWrapper<User> sql = new QueryWrapper<User>();
+        User res = userMapper.selectOne(sql.eq("username", user.getUsername()).eq("password", user.getPassword()));
+        if (res == null){
+            userMapper.insert(user);
+        } else {
             return Result.error("-1","用户名重复");
         }
+
+//        LambdaQueryWrapper<User> sql = new LambdaQueryWrapper<>();
+//        User res = userMapper.selectOne(sql.eq(User::getUsername, user.getUsername()));
+//        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
+//        if (res.getUsername()!=null){
+//            return Result.error("-1","用户名重复");
+//        }
         if (user.getPassword()==null){
             user.setPassword("123456");
         }
-        userMapper.insert(user);
+
         return Result.success();
 
     }
